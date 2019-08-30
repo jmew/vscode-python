@@ -108,7 +108,10 @@ import { GatherExecution } from '../../client/datascience/gather/gather';
 import { GatherListener } from '../../client/datascience/gather/gatherListener';
 import {
     DotNetIntellisenseProvider
-} from '../../client/datascience/interactive-window/intellisense/dotNetIntellisenseProvider';
+} from '../../client/datascience/interactive-common/intellisense/dotNetIntellisenseProvider';
+import { IpynbCommandListener } from '../../client/datascience/interactive-ipynb/ipynbCommandListener';
+import { IpynbEditor } from '../../client/datascience/interactive-ipynb/ipynbEditor';
+import { IpynbProvider } from '../../client/datascience/interactive-ipynb/ipynbEditorProvider';
 import { InteractiveWindow } from '../../client/datascience/interactive-window/interactiveWindow';
 import {
     InteractiveWindowCommandListener
@@ -151,6 +154,8 @@ import {
     IJupyterPasswordConnect,
     IJupyterSessionManager,
     IJupyterVariables,
+    INotebookEditor,
+    INotebookEditorProvider,
     INotebookExecutionLogger,
     INotebookExporter,
     INotebookImporter,
@@ -359,6 +364,9 @@ export class DataScienceIocContainer extends UnitTestIocContainer {
         this.serviceManager.addSingleton<IJupyterDebugger>(IJupyterDebugger, JupyterDebugger);
         this.serviceManager.addSingleton<IDebugLocationTracker>(IDebugLocationTracker, DebugLocationTracker);
         this.serviceManager.addSingleton<IDebugLocationTrackerFactory>(IDebugLocationTrackerFactory, DebugLocationTrackerFactory);
+        this.serviceManager.addSingleton<INotebookEditorProvider>(INotebookEditorProvider, IpynbProvider);
+        this.serviceManager.add<INotebookEditor>(INotebookEditor, IpynbEditor);
+        this.serviceManager.addSingleton<IDataScienceCommandListener>(IDataScienceCommandListener, IpynbCommandListener);
 
         this.serviceManager.addSingleton<ITerminalHelper>(ITerminalHelper, TerminalHelper);
         this.serviceManager.addSingleton<ITerminalActivationCommandProvider>(
@@ -426,7 +434,6 @@ export class DataScienceIocContainer extends UnitTestIocContainer {
             showJupyterVariableExplorer: true,
             variableExplorerExclude: 'module;function;builtin_function_or_method',
             liveShareConnectionTimeout: 100,
-            autoPreviewNotebooksInInteractivePane: true,
             enablePlotViewer: true,
             stopOnFirstLineWhileDebugging: true,
             stopOnError: true,
