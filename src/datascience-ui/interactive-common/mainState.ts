@@ -24,6 +24,8 @@ export interface ICellViewModel {
     showLineNumbers?: boolean;
     hideOutput?: boolean;
     useQuickEdit?: boolean;
+    collapseOutput?: boolean;
+    collapseInput?: boolean;
     inputBlockToggled(id: string): void;
 }
 

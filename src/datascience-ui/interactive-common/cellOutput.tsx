@@ -27,6 +27,7 @@ interface ICellOutputProps {
     baseTheme: string;
     maxTextSize?: number;
     hideOutput?: boolean;
+    collapsed?: boolean;
     openLink(uri: monacoEditor.Uri): void;
     expandImage(imageHtml: string): void;
 }

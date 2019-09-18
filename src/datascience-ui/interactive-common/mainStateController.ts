@@ -599,6 +599,18 @@ export class MainStateController implements IMessageHandler {
         }
     }
 
+    public toggleCollapse = (cellId: string, input: boolean) => {//todo set default to not be collapsed
+        const cell = this.findCell(cellId);
+        if (cell) {
+            if (input) {
+                cell.collapseInput = !cell.collapseInput;
+            } else {
+                cell.collapseOutput = !cell.collapseOutput;
+            }
+            this.setState({ cellVMs: this.state.cellVMs });
+        }
+    }
+
     public setState(newState: {}, callback?: () => void) {
         if (this.suspendUpdateCount > 0) {
             // Just save our new state

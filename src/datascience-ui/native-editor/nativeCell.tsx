@@ -36,6 +36,8 @@ interface INativeCellProps {
     showLineNumbers?: boolean;
     selectedCell?: string;
     focusedCell?: string;
+    collapseOutput?: boolean;
+    collapseInput?: boolean;
     focusCell(cellId: string, focusCode: boolean): void;
     selectCell(cellId: string): void;
 }
@@ -147,29 +149,52 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
             cellWrapperClass += ' cell-wrapper-focused';
         }
 
-        // Content changes based on if a markdown cell or not.
-        const content = this.isMarkdownCell() && !this.state.showingMarkdownEditor ?
-            <div className='cell-result-container'>
-                <div className='cell-row-container'>
-                    {this.renderCollapseBar(false)}
-                    {this.renderOutput()}
-                </div>
-                {this.renderAddDivider(false)}
-                {this.renderMiddleToolbar()}
-            </div> :
-            <div className='cell-result-container'>
-                <div className='cell-row-container'>
-                    {this.renderCollapseBar(true)}
-                    {this.renderControls()}
-                    {this.renderInput()}
-                </div>
-                {this.renderAddDivider(true)}
-                {this.renderMiddleToolbar()}
-                <div className='cell-row-container'>
-                    {this.renderCollapseBar(false)}
-                    {this.renderOutput()}
-                </div>
-            </div>;
+        let content = null;
+        if (this.props.collapseInput && this.props.collapseOutput) {
+            content =
+                <div className='cell-result-container'>
+                    <div className='cell-row-container'>
+                        <hr/>
+                    </div>
+                </div>;
+        } else {
+            // Content changes based on if a markdown cell or not.
+            content = this.isMarkdownCell() && !this.state.showingMarkdownEditor ?
+                <div className='cell-result-container'>
+                    {this.props.collapseInput ? <hr/> :
+                        <div>
+                            <div className='cell-row-container'>
+                                {this.renderCollapseBar(false)}
+                                {this.renderOutput()}
+                            </div>
+                            {this.renderAddDivider(false)}
+                            {this.renderMiddleToolbar()}
+                        </div>
+                    }
+                </div> :
+                <div className='cell-result-container'>
+                    {this.props.collapseInput ? <hr/> :
+                        <div>
+                            <div className='cell-row-container'>
+                                {this.renderCollapseBar(true)}
+                                {this.renderControls()}
+                                {this.renderInput()}
+                            </div>
+                            {this.renderAddDivider(true)}
+                            {this.renderMiddleToolbar()}
+                        </div>
+                    }
+                    {this.props.collapseOutput ? <hr/> :
+                        <div>
+                            <div className='cell-row-container'>
+                                {this.renderCollapseBar(false)}
+                                {this.renderOutput()}
+                            </div>
+                        </div>
+                    }
+                </div>;
+        }
+>>>>>>> Added logic for collapsed and uncollapsed states for cells
 
         return (
             <div className={cellWrapperClass} role={this.props.role} ref={this.wrapperRef} tabIndex={0} onKeyDown={this.onOuterKeyDown} onClick={this.onMouseClick} onDoubleClick={this.onMouseDoubleClick}>
@@ -650,6 +675,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                     unfocused={this.isCodeCell() ? this.onCodeUnfocused : this.onMarkdownUnfocused}
                     keyDown={this.keyDownInput}
                     showLineNumbers={this.props.showLineNumbers}
+                    collapsed={this.props.collapseInput}
                 />
             );
         }
@@ -692,6 +718,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                     baseTheme={this.props.baseTheme}
                     expandImage={this.props.stateController.showPlot}
                     openLink={this.props.stateController.openLink}
+                    collapsed={this.props.collapseOutput}
                  />
             );
         }
@@ -716,8 +743,20 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
         }
     }
 
+    private triggerCollapse = (input : boolean) => {
+        const cellId = this.props.cellVM.cell.id;
+        this.props.stateController.toggleCollapse(cellId, input);
+    }
+
     private renderCollapseBar = (input: boolean) => {
         let classes = 'collapse-bar';
+
+        const collapse = () => {
+            const commandType = input ? NativeCommandType.CollapseInput : NativeCommandType.CollapseOutput;
+
+            this.triggerCollapse(input);
+            this.props.stateController.sendCommand(commandType, 'mouse');
+        };
 
         if (this.props.selectedCell === this.props.cellVM.cell.id && this.props.focusedCell !== this.props.cellVM.cell.id) {
             classes += ' collapse-bar-selected';
@@ -727,7 +766,8 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
         }
 
         if (input) {
-            return <div className={classes}></div>;
+            return <div role={this.props.role} onClick={collapse} className={classes}></div>;//tooltip={getLocString('DataScience.collaseInput', 'Collapse Input')}
+
         }
 
         if (this.props.cellVM.cell.data.cell_type === 'markdown') {
@@ -738,6 +778,6 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
             return null;
         }
 
-        return <div className={classes}></div>;
+        return <div role={this.props.role} onClick={collapse} className={classes}></div>; //tooltip={getLocString('DataScience.collaseOutput', 'Collapse Output')}
     }
 }

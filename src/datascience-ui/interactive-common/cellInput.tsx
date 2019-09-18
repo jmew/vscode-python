@@ -28,6 +28,7 @@ interface ICellInputProps {
     editorMeasureClassName?: string;
     focusedCell?: string;
     showLineNumbers?: boolean;
+    collapsed?: boolean;
     onCodeChange(changes: monacoEditor.editor.IModelContentChange[], cellId: string, modelId: string): void;
     onCodeCreated(code: string, file: string, cellId: string, modelId: string): void;
     openLink(uri: monacoEditor.Uri): void;

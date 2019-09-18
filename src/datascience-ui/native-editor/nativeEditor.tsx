@@ -392,6 +392,8 @@ export class NativeEditor extends React.Component<INativeEditorProps, IMainState
                         hideOutput={cellVM.hideOutput}
                         focusCell={this.focusCell}
                         selectCell={this.selectCell}
+                        collapseOutput={cellVM.collapseOutput}
+                        collapseInput={cellVM.collapseInput}
                     />
                 </ErrorBoundary>
                 {lastLine}
