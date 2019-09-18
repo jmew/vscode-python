@@ -173,7 +173,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
             content =
                 <div className='cell-result-container'>
                     <div className='cell-row-container'>
-                        <CollapsedCellLine className='collapse-cell-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandAll}/>
+                        <CollapsedCellLine className='collapse-cell-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} click={expandAll}/>
                     </div>
                 </div>;
         } else {
@@ -181,7 +181,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
             content = this.isMarkdownCell() && !this.state.showingMarkdownEditor ?
                 (<div className='cell-result-container'>
                     {this.props.collapseInput ?
-                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandInput}/>
+                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} click={expandInput}/>
                         :
                         <div>
                             <div className='cell-row-container'>
@@ -195,7 +195,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                 </div>) :
                 (<div className='cell-result-container'>
                     {this.props.collapseInput ?
-                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandInput}/>
+                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} click={expandInput}/>
                         :
                         <div>
                             <div className='cell-row-container'>
@@ -208,7 +208,7 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                         </div>
                     }
                     {this.props.collapseOutput ?
-                        <CollapsedCellLine className='collapse-output-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandOutput}/>
+                        <CollapsedCellLine className='collapse-output-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} click={expandOutput}/>
                         :
                         <div>
                             <div className='cell-row-container'>
