@@ -345,6 +345,10 @@
     background-color: var(--override-widget-background, var(--vscode-notifications-background));
 }
 
+.collapse-bar:hover {
+    cursor: pointer;
+}
+
 .collapse-bar-markdown {
     margin: 0px 44px 0px 0px;
 }
@@ -365,6 +369,21 @@
         var(--vscode-editorGutter-addedBackground) 3px,
         var(--vscode-editorGutter-addedBackground) 6px
     );
+}
+
+.collapsed-cell-circle {
+    border: 2px solid var(--override-widget-background);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+}
+
+.collapsed-cell-circle-selected {
+    border: 2px solid var(--vscode-peekView-border);
+}
+
+.collapsed-cell-circle-focused {
+    border: 2px solid var(--vscode-editorGutter-addedBackground);
 }
 
 .cell-wrapper:hover .collapse-bar-selected {

@@ -20,6 +20,7 @@ import { Image, ImageName } from '../react-common/image';
 import { ImageButton } from '../react-common/imageButton';
 import { getLocString } from '../react-common/locReactSide';
 import { AddCellLine } from './addCellLine';
+import { CollapsedCellLine } from './collapsedCellLine';
 import { NativeEditorStateController } from './nativeEditorStateController';
 
 interface INativeCellProps {
@@ -142,26 +143,46 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
     private renderNormalCell() {
         const cellOuterClass = this.props.cellVM.editable ? 'cell-outer-editable' : 'cell-outer';
         let cellWrapperClass = this.props.cellVM.editable ? 'cell-wrapper' : 'cell-wrapper cell-wrapper-noneditable';
+        let collapsedCellPlaceholderClass = 'collapsed-cell-circle';
         if (this.isSelected() && !this.isFocused()) {
             cellWrapperClass += ' cell-wrapper-selected';
+            collapsedCellPlaceholderClass += ' collapsed-cell-circle-selected';
         }
         if (this.isFocused()) {
             cellWrapperClass += ' cell-wrapper-focused';
+            collapsedCellPlaceholderClass += ' collapsed-cell-circle-focused';
         }
+
+        const expandInput = () => {
+            this.props.stateController.sendCommand(NativeCommandType.ExpandInput, 'mouse');
+            this.triggerCollapse(true);
+        };
+
+        const expandOutput = () => {
+            this.props.stateController.sendCommand(NativeCommandType.ExpandOutput, 'mouse');
+            this.triggerCollapse(false);
+        };
+
+        const expandAll = () => {
+            expandInput();
+            expandOutput();
+        };
 
         let content = null;
         if (this.props.collapseInput && this.props.collapseOutput) {
             content =
                 <div className='cell-result-container'>
                     <div className='cell-row-container'>
-                        <hr/>
+                        <CollapsedCellLine className='collapse-cell-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandAll}/>
                     </div>
                 </div>;
         } else {
             // Content changes based on if a markdown cell or not.
             content = this.isMarkdownCell() && !this.state.showingMarkdownEditor ?
-                <div className='cell-result-container'>
-                    {this.props.collapseInput ? <hr/> :
+                (<div className='cell-result-container'>
+                    {this.props.collapseInput ?
+                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandInput}/>
+                        :
                         <div>
                             <div className='cell-row-container'>
                                 {this.renderCollapseBar(false)}
@@ -171,9 +192,11 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                             {this.renderMiddleToolbar()}
                         </div>
                     }
-                </div> :
-                <div className='cell-result-container'>
-                    {this.props.collapseInput ? <hr/> :
+                </div>) :
+                (<div className='cell-result-container'>
+                    {this.props.collapseInput ?
+                        <CollapsedCellLine className='collapse-input-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandInput}/>
+                        :
                         <div>
                             <div className='cell-row-container'>
                                 {this.renderCollapseBar(true)}
@@ -184,7 +207,9 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                             {this.renderMiddleToolbar()}
                         </div>
                     }
-                    {this.props.collapseOutput ? <hr/> :
+                    {this.props.collapseOutput ?
+                        <CollapsedCellLine className='collapse-output-placeholder' circleClassName={collapsedCellPlaceholderClass} baseTheme={this.props.baseTheme} includePlus={false} click={expandOutput}/>
+                        :
                         <div>
                             <div className='cell-row-container'>
                                 {this.renderCollapseBar(false)}
@@ -192,14 +217,13 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
                             </div>
                         </div>
                     }
-                </div>;
+                </div>);
         }
->>>>>>> Added logic for collapsed and uncollapsed states for cells
 
         return (
             <div className={cellWrapperClass} role={this.props.role} ref={this.wrapperRef} tabIndex={0} onKeyDown={this.onOuterKeyDown} onClick={this.onMouseClick} onDoubleClick={this.onMouseDoubleClick}>
                 <div className={cellOuterClass}>
-                    {this.renderNavbar()}
+                    {!(this.props.collapseInput && this.props.collapseOutput) ? this.renderNavbar() : null}
                     <div className='content-div'>
                         {content}
                     </div>
@@ -767,7 +791,6 @@ export class NativeCell extends React.Component<INativeCellProps, INativeCellSta
 
         if (input) {
             return <div role={this.props.role} onClick={collapse} className={classes}></div>;//tooltip={getLocString('DataScience.collaseInput', 'Collapse Input')}
-
         }
 
         if (this.props.cellVM.cell.data.cell_type === 'markdown') {
